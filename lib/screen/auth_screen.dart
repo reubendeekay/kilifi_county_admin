@@ -1,9 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:kilifi_county_admin/helpers/constants.dart';
+import 'package:kilifi_county_admin/helpers/footer.dart';
 
 class AuthScreen extends StatefulWidget {
+  static const routeName = '/auth-screen';
   @override
   _AuthScreenState createState() => _AuthScreenState();
 }
@@ -29,117 +34,124 @@ class _AuthScreenState extends State<AuthScreen> {
     return Scaffold(
       body: Row(
         children: [
-          Container(
-            width: size.width * 0.54,
-            height: double.infinity,
-            child:
-                Image.asset('assets/images/wallpaper.jpg', fit: BoxFit.cover),
-          ),
+          if (size.width > 648)
+            Container(
+                width: size.width * 0.5,
+                height: double.infinity,
+                child:
+                    // Image.asset('assets/images/wallpaper.jpg', fit: BoxFit.cover),
+                    SvgPicture.asset(
+                  'assets/images/back.svg',
+                  fit: BoxFit.fill,
+                )),
           Expanded(
               child: Container(
             margin: EdgeInsets.symmetric(
-                horizontal: size.width * 0.03, vertical: 10),
+                horizontal: size.width * 0.1, vertical: 10),
             child: Form(
               key: _formKey,
-              child: Column(
-                children: [
-                  SizedBox(
-                    height: size.height * 0.1,
-                  ),
-                  Container(
-                    height: 150,
-                    child: Image.asset(
-                      'assets/images/logo.png',
-                      fit: BoxFit.fill,
+              child: Container(
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: size.height * 0.1,
                     ),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Card(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20)),
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 20),
-                      child: TextFormField(
-                        decoration: InputDecoration(
-                            hintText: 'email',
-                            border: InputBorder.none,
-                            prefixIcon: Icon(
-                              Icons.email,
-                              color: kBackground,
-                            )),
-                        onChanged: (value) {
-                          setState(() {
-                            email = value;
-                          });
-                        },
-                        validator: (value) {
-                          if (value.isEmpty) {
-                            return 'Please enter an email';
-                          }
-                          return null;
-                        },
+                    Container(
+                      height: 130,
+                      child: Image.asset(
+                        'assets/images/logo.png',
+                        fit: BoxFit.fill,
                       ),
                     ),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Card(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20)),
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 20),
-                      child: TextFormField(
-                        decoration: InputDecoration(
-                            hintText: 'password',
-                            border: InputBorder.none,
-                            prefixIcon: Icon(
-                              Icons.lock,
-                              color: kBackground,
-                            )),
-                        onChanged: (value) {
-                          setState(() {
-                            password = value;
-                          });
-                        },
-                        validator: (value) {
-                          if (value.isEmpty) {
-                            return 'Please enter a password';
-                          }
-                          return null;
-                        },
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 30,
-                  ),
-                  SizedBox(
-                      height: 30,
-                      width: size.width * 0.25,
-                      child: RaisedButton(
-                        onPressed: _trySubmit,
+                    SizedBox(height: 20),
+                    Container(
                         child: Text(
-                          'Sign in',
-                          style: font().copyWith(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500),
+                      'Login',
+                      style: font(fontSize: 25, fontWeight: FontWeight.bold),
+                    )),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Card(
+                      // shape: RoundedRectangleBorder(
+                      //     borderRadius: BorderRadius.circular(20)),
+                      elevation: 0,
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        child: TextFormField(
+                          decoration: InputDecoration(
+                              hintText: 'email',
+                              // border: InputBorder.none,
+                              suffixIcon: Icon(
+                                Icons.email,
+                                color: kBackground,
+                              )),
+                          onChanged: (value) {
+                            setState(() {
+                              email = value;
+                            });
+                          },
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              return 'Please enter an email';
+                            }
+                            return null;
+                          },
                         ),
-                        color: kBackground,
-                      )),
-                  Spacer(),
-                  Container(
-                      child: Text(
-                    '*Only admins can log in. With great power,comes great responsibility',
-                    style: font().copyWith(
-                        fontSize: 12,
-                        color: kBackground,
-                        fontStyle: FontStyle.italic),
-                  ))
-                ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Card(
+                      // shape: RoundedRectangleBorder(
+                      // borderRadius: BorderRadius.circular(20)),
+                      elevation: 0,
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        child: TextFormField(
+                          decoration: InputDecoration(
+                              hintText: 'password',
+                              // border: InputBorder.none,
+                              suffixIcon: Icon(
+                                Icons.lock,
+                                color: kBackground,
+                              )),
+                          onChanged: (value) {
+                            setState(() {
+                              password = value;
+                            });
+                          },
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              return 'Please enter a password';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 30,
+                    ),
+                    SizedBox(
+                        height: 40,
+                        width: size.width * 0.15,
+                        child: RaisedButton(
+                          onPressed: _trySubmit,
+                          child: Text(
+                            'Sign in',
+                            style: font().copyWith(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500),
+                          ),
+                          color: kBackground,
+                        )),
+                    Spacer(),
+                    Footer()
+                  ],
+                ),
               ),
             ),
           ))

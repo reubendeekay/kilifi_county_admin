@@ -6,26 +6,31 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:kilifi_county_admin/helpers/constants.dart';
+import 'package:kilifi_county_admin/models/news_model.dart';
 import 'package:kilifi_county_admin/providers/user_provider.dart';
 import 'package:provider/provider.dart';
 
-class AddArticle extends StatelessWidget {
-  static const routeName = '/add-article';
+class EditArticle extends StatelessWidget {
+  static const routeName = '/edit-article';
 
   @override
   Widget build(BuildContext context) {
+    final news = ModalRoute.of(context).settings.arguments as NewsModel;
     return Scaffold(
         body: Container(
-            color: kBackground.withOpacity(0.5), child: WriteArticle()));
+            color: kBackground.withOpacity(0.5),
+            child: WriteExistingArticle(news)));
   }
 }
 
-class WriteArticle extends StatefulWidget {
+class WriteExistingArticle extends StatefulWidget {
+  final NewsModel news;
+  WriteExistingArticle(this.news);
   @override
-  _WriteArticleState createState() => _WriteArticleState();
+  _WriteExistingArticleState createState() => _WriteExistingArticleState();
 }
 
-class _WriteArticleState extends State<WriteArticle> {
+class _WriteExistingArticleState extends State<WriteExistingArticle> {
   final titleController = TextEditingController();
 
   final articleController = TextEditingController();

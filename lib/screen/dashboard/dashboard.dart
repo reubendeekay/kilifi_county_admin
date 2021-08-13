@@ -32,6 +32,7 @@ class Dashboard extends StatelessWidget {
                         phoneNumber: data['phoneNumber'],
                         subCounty: data['subCounty'],
                         userId: data['userId'],
+                        office: data['office'],
                         username: data['username'],
                         isVerified: data['isVerified']));
               }
@@ -41,7 +42,7 @@ class Dashboard extends StatelessWidget {
                     children: [
                       DashboardCarousel(),
                       GreetingsTop(),
-                      TopUser(),
+                      Positioned(top: 0, right: 0, child: TopUser()),
                     ],
                   ),
                   DashboardContainer()

@@ -44,16 +44,32 @@ class ResourcesTop extends StatelessWidget {
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Container(
-                  width: size.width * 0.45,
-                  child: Text(
-                    'Upload official documents and offial news letters to the Public. Users will be able to download the documents to their devices. Ensure each document is in the right category and has a descriptive name',
-                    softWrap: true,
-                    overflow: TextOverflow.fade,
-                    style: font().copyWith(fontSize: 18),
-                  ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      child: Text(
+                        'County Official Documents',
+                        style: font().copyWith(
+                            fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Container(
+                      width: size.width * 0.45,
+                      child: Text(
+                        'Upload official documents and offial news letters to the Public. Users will be able to download the documents to their devices. Ensure each document is in the right category and has a descriptive name',
+                        softWrap: true,
+                        overflow: TextOverflow.fade,
+                        style: font().copyWith(fontSize: 18),
+                      ),
+                    ),
+                  ],
                 ),
                 SizedBox(
                   width: 20,
@@ -61,7 +77,7 @@ class ResourcesTop extends StatelessWidget {
                 FaIcon(
                   FontAwesomeIcons.solidFolder,
                   color: kBackground,
-                  size: size.width * 0.09,
+                  size: size.width * 0.08,
                 )
               ],
             ),

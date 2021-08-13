@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:kilifi_county_admin/helpers/constants.dart';
 import 'package:kilifi_county_admin/screen/user_management/user_management.dart';
 
@@ -9,34 +11,72 @@ class NewUsers extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 25),
-      child: Row(
-        children: [
-          UserManagementCard(),
-          TotalUsersTile(),
-          SizedBox(
-            width: 10,
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                margin: EdgeInsets.only(left: 15, top: 15, bottom: 5),
-                child: Text(
-                  'Latest Registered users',
-                  style: font()
-                      .copyWith(fontWeight: FontWeight.bold, fontSize: 16),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: [
+            UserManagementCard(),
+            StreamBuilder(
+                stream:
+                    FirebaseFirestore.instance.collection('users').snapshots(),
+                builder: (ctx, snapshots) {
+                  if (snapshots.hasData && !snapshots.hasError) {
+                    return GestureDetector(
+                      onTap: () => Navigator.of(context)
+                          .pushNamed(UserManagement.routeName),
+                      child: TotalUsersTile(
+                        number: snapshots.data.docs.length,
+                      ),
+                    );
+                  } else {
+                    return TotalUsersTile();
+                  }
+                }),
+            SizedBox(
+              width: 10,
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  margin: EdgeInsets.only(left: 15, top: 15, bottom: 5),
+                  child: Text(
+                    'Latest Registered users',
+                    style: font()
+                        .copyWith(fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
                 ),
-              ),
-              Row(
-                children: [
-                  NewUserTile(),
-                  NewUserTile(),
-                  NewUserTile(),
-                ],
-              ),
-            ],
-          )
-        ],
+                StreamBuilder(
+                    stream: FirebaseFirestore.instance
+                        .collection('users')
+                        .orderBy('joinedAt')
+                        .limit(3)
+                        .snapshots(),
+                    builder: (ctx, snapshots) {
+                      if (snapshots.hasData && !snapshots.hasError) {
+                        List<DocumentSnapshot> documents = snapshots.data.docs;
+                        return Row(
+                          children: documents
+                              .map((e) => GestureDetector(
+                                    onTap: () => Navigator.of(context)
+                                        .pushNamed(UserManagement.routeName),
+                                    child: NewUserTile(
+                                      dateJoined: e['joinedAt'],
+                                      fullName: e['fullName'],
+                                      imageUrl: e['imageUrl'],
+                                      username: e['username'],
+                                    ),
+                                  ))
+                              .toList(),
+                        );
+                      } else {
+                        return Container();
+                      }
+                    }),
+              ],
+            )
+          ],
+        ),
       ),
     );
   }
@@ -118,6 +158,14 @@ class TotalUsersTile extends StatelessWidget {
 }
 
 class NewUserTile extends StatelessWidget {
+  final String imageUrl;
+  final String fullName;
+  final String username;
+  final Timestamp dateJoined;
+
+  const NewUserTile(
+      {Key key, this.imageUrl, this.fullName, this.username, this.dateJoined})
+      : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -138,21 +186,21 @@ class NewUserTile extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 30,
-                backgroundImage: AssetImage('assets/images/profile.jpg'),
+                backgroundImage: NetworkImage(imageUrl),
               ),
               SizedBox(
                 height: 1.25,
               ),
               Container(
                   margin: EdgeInsets.symmetric(vertical: 1),
-                  child: Text('Reuben Jefwa',
+                  child: Text(fullName,
                       style: font().copyWith(
                         fontWeight: FontWeight.w500,
                       ))),
               Container(
                   margin: EdgeInsets.symmetric(vertical: 1.25),
                   child: Text(
-                    '@deekay',
+                    '@$username',
                     style: font().copyWith(
                       fontSize: 12,
                     ),
@@ -168,7 +216,9 @@ class NewUserTile extends StatelessWidget {
                   padding: EdgeInsets.symmetric(horizontal: 6, vertical: 1.5),
                   margin: EdgeInsets.symmetric(vertical: 1.25),
                   child: Text(
-                    '11/12/2021',
+                    DateTime.now().difference(dateJoined.toDate()).inHours > 24
+                        ? DateFormat('dd/MM/yyy').format(dateJoined.toDate())
+                        : DateFormat.jm().format(dateJoined.toDate()),
                     style: font().copyWith(
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
@@ -190,6 +240,7 @@ class UserManagementCard extends StatelessWidget {
       onTap: () => Navigator.of(context).pushNamed(UserManagement.routeName),
       child: Container(
         width: size.width * 0.28,
+        constraints: BoxConstraints(minHeight: 175),
         margin: EdgeInsets.symmetric(horizontal: 10),
         decoration: BoxDecoration(
             gradient: LinearGradient(

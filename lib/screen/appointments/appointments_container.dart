@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:flutter/material.dart';
 import 'package:kilifi_county_admin/helpers/constants.dart';
+import 'package:kilifi_county_admin/helpers/responsive.dart';
+import 'package:kilifi_county_admin/screen/appointments/widgets/appointment_card.dart';
 
 class AppoinmentsContainer extends StatelessWidget {
   @override
@@ -9,56 +11,15 @@ class AppoinmentsContainer extends StatelessWidget {
     final size = MediaQuery.of(context).size;
     return Container(
       alignment: AlignmentDirectional.topStart,
-      child: DefaultTabController(
-        length: size.width > 871 ? 2 : 3,
-        child: Scaffold(
-          appBar: AppBar(
-            elevation: 0,
-            backgroundColor: Colors.white,
-            bottom: TabBar(
-              indicatorColor: Colors.white,
-              labelPadding: EdgeInsets.symmetric(horizontal: 20),
-              unselectedLabelColor: Colors.grey,
-              labelColor: Colors.black,
-              // indicator: BoxDecoration(
-              //     color: kPrimary, borderRadius: BorderRadius.circular(10)),
-              labelStyle: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
-              unselectedLabelStyle:
-                  TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
-              onTap: (index) {
-                // Tab index when user select it, it start from zero
-              },
-              tabs: [
-                Tab(
-                  child: Text('Latest'),
-                ),
-                Tab(
-                  child: Text('Pending'),
-                ),
-                if (size.width < 871)
-                  Tab(
-                    child: Text('Approved'),
-                  ),
-              ],
-            ),
-            title: Center(
-              child: Text(
-                'Appointments',
-                style: font().copyWith(
-                    color: Colors.black,
-                    fontWeight: FontWeight.w900,
-                    fontSize: 28),
-              ),
-            ),
+      width: size.width * 0.7,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SizedBox(
+            height: 50,
           ),
-          body: TabBarView(
-            children: [
-              AppointmentList(),
-              AppointmentList(),
-              if (size.width < 871) AppointmentList(),
-            ],
-          ),
-        ),
+          AppointmentList(),
+        ],
       ),
     );
   }
@@ -68,50 +29,104 @@ class AppointmentList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    int getNum() {
-      if (size.width < 1290) {
-        return 2;
-      } else if (size.width < 1095) {
-        return 3;
-      } else if (size.width < 871) {
-        return 3;
-      } else if (size.width < 500) {
-        return 2;
-      } else if (size.width < 440) {
-        return 1;
-      } else {
-        return 3;
-      }
-    }
 
     return StreamBuilder(
       stream: FirebaseFirestore.instance
           .collection('admin')
           .doc('appointments')
           .collection('Governor')
+          .where('isApproved', isNotEqualTo: true)
           .snapshots(),
       builder: (ctx, snapshot) {
         if (snapshot.hasData && !snapshot.hasError) {
           List<DocumentSnapshot> documents = snapshot.data.docs;
 
-          return Container(
-              child: GridView.count(
-            crossAxisCount: getNum(),
-            shrinkWrap: true,
-            childAspectRatio: 1 / 1,
-            children: documents
-                .map((e) => AppointmentTile(
-                      date: e['date'],
-                      fullName: e['name'],
-                      time: e['time'],
-                      idNo: e['idNo'],
-                      purpose: e['purpose'],
-                      phoneNumber: e['phoneNumber'],
-                      office: e['office'],
-                      isApproved: e['isApproved'],
-                    ))
-                .toList(),
-          ));
+          return Responsive(
+            desktop: Container(
+              child: Center(
+                child: GridView.builder(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3,
+                      mainAxisExtent:
+                          210, // <== change the height to fit your needs
+                    ),
+                    itemCount: documents.length,
+                    shrinkWrap: true,
+                    itemBuilder: (context, i) => AppointmentCard(
+                          date: documents[i]['date'],
+                          imageUrl: documents[i]['imageUrl'],
+                          appointmentId: documents[i]['appointmentId'],
+                          username: documents[i]['username'],
+                          fullName: documents[i]['name'],
+                          time: documents[i]['time'],
+                          idNo: documents[i]['idNo'],
+                          purpose: documents[i]['purpose'],
+                          phoneNumber: documents[i]['phoneNumber'],
+                          office: documents[i]['office'],
+                          isApproved: documents[i]['isApproved'],
+                        )),
+              ),
+            ),
+            tab: Center(
+              child: GridView.builder(
+                  shrinkWrap: true,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    mainAxisExtent:
+                        210, // <== change the height to fit your needs
+                  ),
+                  itemCount: documents.length,
+                  itemBuilder: (context, i) => AppointmentCard(
+                        date: documents[i]['date'],
+                        appointmentId: documents[i]['appointmentId'],
+                        imageUrl: documents[i]['imageUrl'],
+                        username: documents[i]['username'],
+                        fullName: documents[i]['name'],
+                        time: documents[i]['time'],
+                        idNo: documents[i]['idNo'],
+                        purpose: documents[i]['purpose'],
+                        phoneNumber: documents[i]['phoneNumber'],
+                        office: documents[i]['office'],
+                        isApproved: documents[i]['isApproved'],
+                      )),
+            ),
+            mobile: GridView.builder(
+                shrinkWrap: true,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  mainAxisExtent:
+                      210, // <== change the height to fit your needs
+                ),
+                itemCount: documents.length,
+                itemBuilder: (context, i) => AppointmentCard(
+                      date: documents[i]['date'],
+                      fullName: documents[i]['name'],
+                      time: documents[i]['time'],
+                      idNo: documents[i]['idNo'],
+                      purpose: documents[i]['purpose'],
+                      phoneNumber: documents[i]['phoneNumber'],
+                      office: documents[i]['office'],
+                      isApproved: documents[i]['isApproved'],
+                    )),
+          );
+
+          //      GridView.count(
+          //   crossAxisCount: getNum(),
+          //   shrinkWrap: true,
+          //   childAspectRatio: 1 / 1,
+          //   children: documents
+          //       .map((e) => AppointmentCard(
+          //             date: e['date'],
+          //             fullName: e['name'],
+          //             time: e['time'],
+          //             idNo: e['idNo'],
+          //             purpose: e['purpose'],
+          //             phoneNumber: e['phoneNumber'],
+          //             office: e['office'],
+          //             isApproved: e['isApproved'],
+          //           ))
+          //       .toList(),
+          // ));
         } else {
           return Container();
         }

@@ -9,6 +9,7 @@ class AddChatTile extends StatelessWidget {
   final messageController = TextEditingController();
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return Column(
       children: [
         Divider(
@@ -16,33 +17,45 @@ class AddChatTile extends StatelessWidget {
         ),
         Container(
           padding: EdgeInsets.symmetric(vertical: 5, horizontal: 25),
-          child: Container(
-            decoration: BoxDecoration(
-                color: Colors.grey[100],
-                borderRadius: BorderRadius.circular(30)),
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10),
-              child: TextField(
-                controller: messageController,
-                decoration: InputDecoration(
-                    border: InputBorder.none,
-                    hintText: 'Type a message here ...',
-                    prefixIcon: Icon(
-                      Icons.attachment,
-                      color: Colors.grey,
-                    ),
-                    suffix: GestureDetector(
-                      onTap: sendMessage,
-                      child: CircleAvatar(
-                        backgroundColor: kPrimary,
-                        child: Icon(
-                          Icons.send,
-                          color: Colors.white,
+          width: size.width,
+          child: Row(
+            children: [
+              Expanded(
+                child: Container(
+                  decoration: BoxDecoration(
+                      color: Colors.grey[100],
+                      borderRadius: BorderRadius.circular(30)),
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    child: TextField(
+                      controller: messageController,
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: 'Type a message here ...',
+                        prefixIcon: Icon(
+                          Icons.attachment,
+                          color: Colors.grey,
                         ),
                       ),
-                    )),
+                      onEditingComplete: sendMessage,
+                    ),
+                  ),
+                ),
               ),
-            ),
+              SizedBox(
+                width: 15,
+              ),
+              GestureDetector(
+                onTap: sendMessage,
+                child: CircleAvatar(
+                  backgroundColor: kPrimary,
+                  child: Icon(
+                    Icons.send,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ],
@@ -65,5 +78,6 @@ class AddChatTile extends StatelessWidget {
         'userId': uid,
         'createdAt': Timestamp.now()
       }, SetOptions(merge: true));
+    messageController.clear();
   }
 }

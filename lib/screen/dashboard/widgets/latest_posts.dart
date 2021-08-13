@@ -11,13 +11,13 @@ class LatestPosts extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            margin: EdgeInsets.symmetric(horizontal: 10),
+            margin: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
             child: Text(
-              'Latest Posts',
-              style: font().copyWith(fontWeight: FontWeight.bold, fontSize: 16),
+              'Posted Employment Opportunities',
+              style: font().copyWith(fontWeight: FontWeight.bold, fontSize: 18),
             ),
           ),
-          PinnedPosts(),
+          JobOpportunitiesPosts(),
         ],
       ),
     );

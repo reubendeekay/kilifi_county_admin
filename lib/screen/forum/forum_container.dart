@@ -4,10 +4,12 @@ import 'package:aligned_dialog/aligned_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-
 import 'package:kilifi_county_admin/helpers/constants.dart';
+import 'package:kilifi_county_admin/helpers/custom_widgets/bar_chart.dart';
+import 'package:kilifi_county_admin/helpers/custom_widgets/line_chart.dart';
+import 'package:kilifi_county_admin/helpers/custom_widgets/radar_chart.dart';
 import 'package:kilifi_county_admin/screen/forum/dialogs.dart';
+import 'package:kilifi_county_admin/screen/forum/widgets/forum_posts.dart';
 
 class ForumContainer extends StatelessWidget {
   @override
@@ -18,10 +20,29 @@ class ForumContainer extends StatelessWidget {
       child: Container(
         child: SingleChildScrollView(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              Container(
+                height: 350,
+                margin: EdgeInsets.all(25),
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      BarChartSample2(),
+                      SizedBox(
+                        width: size.width * 0.02,
+                      ),
+                      LineChartSample2(),
+                      RadarChartSample1(),
+                    ],
+                  ),
+                ),
+              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SendOpportunity(),
                   SizedBox(
@@ -36,12 +57,34 @@ class ForumContainer extends StatelessWidget {
               Center(
                 child: Container(
                     child: Text(
-                  'Latest Posts',
-                  style: GoogleFonts.tinos(
-                      fontWeight: FontWeight.w800, fontSize: 24),
+                  'Poster Job/Internship Opportunities',
+                  style: font(fontWeight: FontWeight.w800, fontSize: 24),
                 )),
               ),
-              PinnedPosts(),
+              SizedBox(
+                height: 20,
+              ),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    JobOpportunitiesPosts(),
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: 40,
+              ),
+              Container(
+                  child: Text(
+                'Forum Posts',
+                style: font(fontWeight: FontWeight.w800, fontSize: 24),
+              )),
+              SizedBox(
+                height: 15,
+              ),
+              ForumPosts()
             ],
           ),
         ),
@@ -165,16 +208,12 @@ class _SendOpportunityState extends State<SendOpportunity> {
   }
 
   Future<void> addOpportunity(BuildContext context) {
-    return showAlignedDialog(
-        followerAnchor: Alignment.bottomRight,
-        targetAnchor: Alignment.bottomRight,
-        avoidOverflow: true,
-        context: context,
-        builder: (context) => JobDialog());
+    return showDialog(
+        context: context, builder: (ctx) => Dialog(child: JobDialog()));
   }
 }
 
-class PinnedPosts extends StatelessWidget {
+class JobOpportunitiesPosts extends StatelessWidget {
   final uid = FirebaseAuth.instance.currentUser.uid;
   @override
   Widget build(BuildContext context) {
@@ -182,33 +221,39 @@ class PinnedPosts extends StatelessWidget {
     return Container(
       child: StreamBuilder(
           stream: FirebaseFirestore.instance
-              .collection('posts')
-              .where('imageUrl', isGreaterThanOrEqualTo: "")
-              .limit(5)
+              .collection('admin')
+              .doc('admin_data')
+              .collection('jobs')
+              .orderBy('createdAt')
+              .limit(4)
               .snapshots(),
           builder: (ctx, snapshot) {
             if (snapshot.hasData && !snapshot.hasError) {
               List<DocumentSnapshot> documents = snapshot.data.docs;
 
               return Container(
-                height: size.width > 648 ? 270 : size.width + 50,
-                child: Center(
-                  child: ListView(
-                    scrollDirection:
-                        size.width > 648 ? Axis.horizontal : Axis.vertical,
-                    physics: size.width > 648
-                        ? ScrollPhysics()
-                        : NeverScrollableScrollPhysics(),
-                    children: documents
-                        .map((e) => post(
-                            size: size,
-                            imageUrl: e['profilePic'],
-                            userId: e['userId'],
-                            username: e['username'],
-                            fullname: e['fullName'],
-                            postUrl: e['imageUrl']))
-                        .toList(),
-                  ),
+                height: 310,
+                child: ListView(
+                  shrinkWrap: true,
+                  scrollDirection:
+                      size.width > 648 ? Axis.horizontal : Axis.vertical,
+                  physics: size.width > 648
+                      ? ScrollPhysics()
+                      : NeverScrollableScrollPhysics(),
+                  children: documents
+                      .map((e) => post(
+                          size: size,
+                          link: e['link'],
+                          title: e['title'],
+                          profile: e['imageUrl'],
+                          description: e['description'],
+                          imageUrl: e['postPics'],
+                          views: e['views'],
+                          userId: e['userId'],
+                          username: e['username'],
+                          fullname: e['fullName'],
+                          jobId: e['jobId']))
+                      .toList(),
                 ),
               );
             } else {
@@ -221,77 +266,120 @@ class PinnedPosts extends StatelessWidget {
   Widget post(
       {String username,
       String userId,
+      String title,
+      int views,
+      final String link,
+      String profile,
+      final String jobId,
+      String description,
       String imageUrl,
       Size size,
-      String postUrl,
       String fullname}) {
     return Container(
-        margin: EdgeInsets.all(10),
-        decoration: BoxDecoration(boxShadow: [
-          BoxShadow(
-            color: Colors.grey[300],
-            spreadRadius: 0.5,
-            blurRadius: 30,
-          )
-        ]),
-        width: 210,
-        child: Card(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(15), topRight: Radius.circular(15)),
-          ),
-          child: Stack(
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                    child: Row(
-                      children: [
-                        CircleAvatar(
-                          radius: 15,
-                          backgroundImage: NetworkImage(imageUrl),
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Container(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                fullname,
-                                style: font()
-                                    .copyWith(fontWeight: FontWeight.bold),
-                              ),
-                              Text('@$username',
-                                  style: font().copyWith(
-                                      fontSize: 12, color: Colors.grey))
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
+      width: 300,
+      decoration: kBox,
+      child: Stack(
+        children: [
+          Card(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  height: 150,
+                  child: Image.network(
+                    imageUrl,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
                   ),
-                  Container(
-                      width: double.infinity,
-                      height: size.width > 648 ? 200 : size.width - 20,
-                      child: ClipRRect(
-                          child: Image.network(postUrl, fit: BoxFit.fill))),
-                ],
-              ),
-              Positioned(
-                right: 5,
-                top: 2,
-                child: Icon(
-                  Icons.cancel,
-                  size: 25,
-                  color: kPrimary,
                 ),
-              )
-            ],
+                Container(
+                  margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                  child: Column(
+                    children: [
+                      Container(
+                        height: 40,
+                        width: 260,
+                        child: Text(
+                          title,
+                          softWrap: true,
+                          overflow: TextOverflow.ellipsis,
+                          style:
+                              font(fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Container(
+                        height: 50,
+                        width: 270,
+                        child: Text(
+                          description,
+                          softWrap: true,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      Divider(),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.remove_red_eye_outlined,
+                            size: 15,
+                          ),
+                          SizedBox(
+                            width: 5,
+                          ),
+                          Text(
+                            '$views',
+                            style: font(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.grey),
+                          )
+                        ],
+                      )
+                    ],
+                  ),
+                )
+              ],
+            ),
           ),
-        ));
+          Positioned(
+            top: 10,
+            right: 10,
+            child: PopupMenuButton(
+              itemBuilder: (ctx) => [
+                PopupMenuItem(
+                    value: 0,
+                    child: Text(
+                      'Delete',
+                      style: font(fontSize: 12),
+                    )),
+                PopupMenuItem(
+                    value: 1,
+                    child: Text(
+                      'Update',
+                      style: font(fontSize: 12),
+                    )),
+              ],
+              child: Icon(
+                Icons.more_vert,
+                color: kPrimary,
+              ),
+              onSelected: (i) {
+                if (i == 0) {
+                  FirebaseFirestore.instance
+                      .collection('admin')
+                      .doc('admin_data')
+                      .collection('jobs')
+                      .doc(jobId)
+                      .delete();
+                }
+              },
+            ),
+          )
+        ],
+      ),
+    );
   }
 }

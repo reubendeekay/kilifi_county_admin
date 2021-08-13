@@ -29,8 +29,7 @@ class ArticlesContainer extends StatelessWidget {
                   if (snapshot.hasData && !snapshot.hasError) {
                     List<DocumentSnapshot> documents = snapshot.data.docs;
 
-                    return Expanded(
-                        child: ListView.builder(
+                    return ListView.builder(
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),
                       itemBuilder: (ctx, i) => ArticleTile(
@@ -39,14 +38,14 @@ class ArticlesContainer extends StatelessWidget {
                         title: documents[i]['title'],
                         date: documents[i]['createdAt'],
                         views: documents[i]['views'],
-                        images: documents[i]['images'],
+                        image: documents[i]['images'],
                         username: documents[i]['username'],
                         fullName: documents[i]['fullName'],
                         profilePic: documents[i]['profilePic'],
                         postId: documents[i]['postId'],
                       ),
                       itemCount: documents.length,
-                    ));
+                    );
                   } else {
                     return Container();
                   }

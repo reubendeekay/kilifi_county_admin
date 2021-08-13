@@ -1,8 +1,12 @@
+import 'dart:html' as html;
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hovering/hovering.dart';
+import 'package:intl/intl.dart';
 import 'package:kilifi_county_admin/helpers/constants.dart';
+import 'package:kilifi_county_admin/helpers/custom_widgets/pie_chart.dart';
 import 'package:kilifi_county_admin/helpers/responsive.dart';
 
 class ResourcesList extends StatelessWidget {
@@ -23,9 +27,17 @@ class ResourcesList extends StatelessWidget {
   }
 }
 
-class ResourcesCategory extends StatelessWidget {
+class ResourcesCategory extends StatefulWidget {
   final String name;
   ResourcesCategory(this.name);
+
+  @override
+  _ResourcesCategoryState createState() => _ResourcesCategoryState();
+}
+
+class _ResourcesCategoryState extends State<ResourcesCategory> {
+  final searchController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -38,34 +50,89 @@ class ResourcesCategory extends StatelessWidget {
               width: size.width * 0.17,
               margin: EdgeInsets.all(10),
               child: Text(
-                name,
+                widget.name,
                 style:
                     font().copyWith(fontSize: 16, fontWeight: FontWeight.w600),
               ),
             ),
-            StreamBuilder(
-              stream: FirebaseFirestore.instance
-                  .collection('admin')
-                  .doc('documents')
-                  .collection(name)
-                  .snapshots(),
-              builder: (ctx, snapshot) {
-                if (snapshot.hasData && !snapshot.hasError) {
-                  List<DocumentSnapshot> documents = snapshot.data.docs;
+            Container(
+                width: size.width * 0.26,
+                margin: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                decoration: BoxDecoration(
+                    color: Colors.grey[100],
+                    borderRadius: BorderRadius.circular(20)),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  child: TextField(
+                    controller: searchController,
+                    onChanged: (_) {
+                      setState(() {});
+                    },
+                    decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: 'Search for a document',
+                        prefixIcon: Icon(
+                          Icons.search,
+                          color: Colors.grey,
+                        )),
+                  ),
+                )),
+            searchController.text.isEmpty
+                ? StreamBuilder(
+                    stream: FirebaseFirestore.instance
+                        .collection('admin')
+                        .doc('documents')
+                        .collection(widget.name)
+                        .snapshots(),
+                    builder: (ctx, snapshot) {
+                      if (snapshot.hasData && !snapshot.hasError) {
+                        List<DocumentSnapshot> documents = snapshot.data.docs;
 
-                  return Expanded(
-                      child: ListView(
-                          children: documents
-                              .map((e) => DocumentTile(
-                                    fileName: e['docName'],
-                                    url: e['url'],
-                                  ))
-                              .toList()));
-                } else {
-                  return Container();
-                }
-              },
-            )
+                        return Expanded(
+                            child: ListView(
+                                shrinkWrap: true,
+                                children: documents
+                                    .map((e) => DocumentTile(
+                                          category: e['category'],
+                                          fileName: e['docName'],
+                                          url: e['url'],
+                                        ))
+                                    .toList()));
+                      } else {
+                        return Container();
+                      }
+                    },
+                  )
+                : StreamBuilder(
+                    stream: FirebaseFirestore.instance
+                        .collection('admin')
+                        .doc('documents')
+                        .collection(widget.name)
+                        .where('docName',
+                            isGreaterThanOrEqualTo: toBeginningOfSentenceCase(
+                                searchController.text))
+                        .where('docName',
+                            isLessThan: toBeginningOfSentenceCase(
+                                searchController.text + 'z'))
+                        .snapshots(),
+                    builder: (ctx, snapshot) {
+                      if (snapshot.hasData && !snapshot.hasError) {
+                        List<DocumentSnapshot> documents = snapshot.data.docs;
+
+                        return Expanded(
+                            child: ListView(
+                                children: documents
+                                    .map((e) => DocumentTile(
+                                          category: e['category'],
+                                          fileName: e['docName'],
+                                          url: e['url'],
+                                        ))
+                                    .toList()));
+                      } else {
+                        return Container();
+                      }
+                    },
+                  )
           ],
         ));
   }
@@ -74,7 +141,9 @@ class ResourcesCategory extends StatelessWidget {
 class ResourcesSide extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return AnimatedContainer(
+      duration: Duration(milliseconds: 1000),
+      curve: Curves.easeInBack,
       child: Responsive(
         desktop:
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -87,9 +156,8 @@ class ResourcesSide extends StatelessWidget {
                 style:
                     font().copyWith(fontWeight: FontWeight.bold, fontSize: 18)),
           ),
-          statistic(),
-          statistic(),
-          Expanded(child: ResourcesCategory('Perfomance Contract Docs'))
+          PieChartSample2(),
+          ResourcesCategory('Perfomance Contract Docs')
         ]),
         tab: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           SizedBox(
@@ -101,9 +169,8 @@ class ResourcesSide extends StatelessWidget {
                 style:
                     font().copyWith(fontWeight: FontWeight.bold, fontSize: 18)),
           ),
-          statistic(),
-          statistic(),
-          Expanded(child: ResourcesCategory('Perfomance Contract Docs'))
+          PieChartSample2(),
+          ResourcesCategory('Perfomance Contract Docs'),
         ]),
         mobile: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           SizedBox(
@@ -115,38 +182,9 @@ class ResourcesSide extends StatelessWidget {
                 style:
                     font().copyWith(fontWeight: FontWeight.bold, fontSize: 18)),
           ),
-          statistic(),
-          statistic(),
+          PieChartSample2(),
         ]),
       ),
-    );
-  }
-
-  Widget statistic() {
-    return Container(
-      height: 50,
-      margin: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-      decoration: BoxDecoration(
-          color: Colors.blue[50], borderRadius: BorderRadius.circular(30)),
-      child: Center(
-          child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            'Total files',
-            style: font().copyWith(color: Colors.blue, fontSize: 15),
-          ),
-          SizedBox(width: 20),
-          CircleAvatar(
-            radius: 20,
-            child: Text(
-              '70',
-              style: font().copyWith(
-                  fontSize: 18, fontWeight: FontWeight.w900, color: kPrimary),
-            ),
-          )
-        ],
-      )),
     );
   }
 }
@@ -154,7 +192,10 @@ class ResourcesSide extends StatelessWidget {
 class DocumentTile extends StatelessWidget {
   final String fileName;
   final String url;
-  DocumentTile({this.fileName, this.url});
+  final String category;
+  DocumentTile({this.fileName, this.category, this.url});
+
+  final nameController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -170,23 +211,111 @@ class DocumentTile extends StatelessWidget {
         borderRadius: BorderRadius.circular(15),
         color: kBackground,
       ),
-      child: Row(
+      child: Stack(
         children: [
-          FaIcon(
-            FontAwesomeIcons.filePdf,
-            size: 30,
-            color: Colors.red,
+          Row(
+            children: [
+              FaIcon(
+                FontAwesomeIcons.filePdf,
+                size: 30,
+                color: Colors.red,
+              ),
+              SizedBox(
+                width: 10,
+              ),
+              Expanded(
+                  child: Container(
+                      child: Text(
+                fileName,
+                softWrap: true,
+                overflow: TextOverflow.fade,
+              )))
+            ],
           ),
-          SizedBox(
-            width: 10,
-          ),
-          Expanded(
-              child: Container(
-                  child: Text(
-            fileName,
-            softWrap: true,
-            overflow: TextOverflow.fade,
-          )))
+          Positioned(
+              top: 0,
+              right: 3,
+              child: PopupMenuButton(
+                  itemBuilder: (ctx) => [
+                        PopupMenuItem(
+                            value: 0,
+                            child: Text(
+                              'Update',
+                              style: font(fontSize: 12),
+                            )),
+                        PopupMenuItem(
+                            value: 1,
+                            child: Text(
+                              'Delete',
+                              style: font(fontSize: 12),
+                            )),
+                        PopupMenuItem(
+                            value: 2,
+                            child: Text(
+                              'Download',
+                              style: font(fontSize: 12),
+                            )),
+                      ],
+                  onSelected: (i) {
+                    if (i == 0) {
+                      showDialog(
+                          context: context,
+                          builder: (ctx) => Dialog(
+                                child: Card(
+                                  child: Container(
+                                    height: 200,
+                                    width: 200,
+                                    child: Column(
+                                      children: [
+                                        TextField(
+                                          maxLines: null,
+                                          controller: nameController,
+                                          decoration: InputDecoration(
+                                              labelText: 'Document name',
+                                              border: InputBorder.none),
+                                        ),
+                                        Spacer(),
+                                        RaisedButton(
+                                          onPressed: () {
+                                            if (nameController.text.isNotEmpty)
+                                              FirebaseFirestore.instance
+                                                  .collection('admin')
+                                                  .doc('documents')
+                                                  .collection(category)
+                                                  .doc(fileName)
+                                                  .update({
+                                                'docName': nameController.text
+                                              });
+                                          },
+                                          color: kPrimary,
+                                          child: Text(
+                                            'Update',
+                                            style: font(color: Colors.white),
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ));
+                    }
+                    if (i == 1) {
+                      FirebaseFirestore.instance
+                          .collection('admin')
+                          .doc('documents')
+                          .collection(category)
+                          .doc(fileName)
+                          .delete();
+                    }
+                    if (i == 2) {
+                      html.window.open(url, fileName);
+                    }
+                  },
+                  child: Icon(
+                    Icons.more_vert,
+                    size: 16,
+                    color: kPrimary,
+                  )))
         ],
       ),
     );

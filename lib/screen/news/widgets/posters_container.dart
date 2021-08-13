@@ -56,9 +56,13 @@ class PostersContainer extends StatelessWidget {
                   scrollDirection: isRow ? Axis.horizontal : Axis.vertical,
                   children: documents
                       .map((e) => PosterTile(
-                            description: e['description'],
-                            image: e['postPics'][0],
-                          ))
+                          description: e['description'],
+                          image: e['postPics'][0],
+                          name: e['fullName'],
+                          posterId: e['postId'],
+                          profilePic: e['imageUrl'],
+                          userName: e['username'],
+                          date: e['createdAt']))
                       .toList()),
             );
           } else {
@@ -125,9 +129,13 @@ class PosterTile extends StatefulWidget {
   final String profilePic;
   final String userName;
   final String description;
+  final String posterId;
+  final Timestamp date;
 
   const PosterTile(
       {this.image,
+      this.posterId,
+      this.date,
       this.name,
       this.profilePic,
       this.userName,
@@ -169,34 +177,90 @@ class _PosterTileState extends State<PosterTile>
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Row(
+      child: Stack(
         children: [
-          Container(
-            alignment: Alignment.center,
-            margin: EdgeInsets.only(left: 8, bottom: 10, top: 2),
-            child: RotationTransition(
-              turns: base,
-              child: DashedCircle(
-                gapSize: gap.value,
-                dashes: 30,
-                color: Colors.deepOrange,
+          Row(
+            children: [
+              Container(
+                alignment: Alignment.center,
+                margin: EdgeInsets.only(left: 8, bottom: 10, top: 2),
                 child: RotationTransition(
-                    turns: reverse,
-                    child: CircleAvatar(
-                      radius: 30.0,
-                      backgroundImage: NetworkImage(widget.image),
-                    )),
+                  turns: base,
+                  child: DashedCircle(
+                    gapSize: gap.value,
+                    dashes: 30,
+                    color: Colors.deepOrange,
+                    child: RotationTransition(
+                        turns: reverse,
+                        child: CircleAvatar(
+                          radius: 30.0,
+                          backgroundImage: NetworkImage(widget.image),
+                        )),
+                  ),
+                ),
               ),
-            ),
+              SizedBox(width: 5),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                        child: Text(
+                      widget.description,
+                      softWrap: true,
+                    )),
+                    Container(
+                      child: Row(
+                        children: [
+                          CircleAvatar(
+                            radius: 6,
+                            backgroundImage: NetworkImage(widget.profilePic),
+                          ),
+                          SizedBox(
+                            width: 3,
+                          ),
+                          Container(
+                            child: Text(
+                              widget.name,
+                              style: font(color: Colors.grey, fontSize: 10),
+                            ),
+                          )
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              )
+            ],
           ),
-          SizedBox(width: 5),
-          Expanded(
-            child: Container(
-                child: Text(
-              widget.description,
-              softWrap: true,
-            )),
-          )
+          Positioned(
+              top: 2,
+              right: 6,
+              child: PopupMenuButton(
+                itemBuilder: (ctx) => [
+                  PopupMenuItem(
+                      value: 0,
+                      child: Text(
+                        'Delete',
+                        style: font(fontSize: 12),
+                      )),
+                ],
+                child: Icon(
+                  Icons.more_vert,
+                  size: 16,
+                  color: kPrimary,
+                ),
+                onSelected: (i) {
+                  if (i == 0) {
+                    FirebaseFirestore.instance
+                        .collection('admin')
+                        .doc('admin_data')
+                        .collection('posters')
+                        .doc(widget.posterId)
+                        .delete();
+                  }
+                },
+              ))
         ],
       ),
     );

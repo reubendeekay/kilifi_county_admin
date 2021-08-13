@@ -11,9 +11,11 @@ class Forum extends StatelessWidget {
       color: Colors.white,
       child: Responsive(
         desktop: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [ForumContainer(), ForumSide()],
         ),
         tab: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [ForumContainer(), ForumSide()],
         ),
         mobile: ForumMobile(),

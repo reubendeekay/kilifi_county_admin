@@ -78,7 +78,7 @@ class ForumMobilePosts extends StatelessWidget {
                     fontWeight: FontWeight.w800, fontSize: 24),
               )),
             ),
-            PinnedPosts(),
+            JobOpportunitiesPosts(),
           ],
         ),
       ),

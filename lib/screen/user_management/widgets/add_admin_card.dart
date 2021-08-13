@@ -346,7 +346,7 @@ class _CreateAdminState extends State<CreateAdmin> {
         'nationalId': idNo,
         'phoneNumber': phoneNumber,
         'subCounty': location,
-        'joinedIn': Timestamp.now(),
+        'joinedAt': Timestamp.now(),
         'isVerified': false,
         'isAdmin': true,
       }, SetOptions(merge: true));

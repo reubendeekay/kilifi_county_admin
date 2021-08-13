@@ -6,6 +6,7 @@ import 'package:kilifi_county_admin/screen/Resources/widgets/resources_top.dart'
 class Resources extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return Container(
       color: Colors.white,
       child: Responsive(
@@ -18,9 +19,10 @@ class Resources extends StatelessWidget {
               ),
             ),
             Expanded(
-                child: Card(
+                child: Container(
+              constraints: BoxConstraints(minWidth: 350),
               child: ResourcesSide(),
-            ))
+            )),
           ],
         ),
         tab: Row(
@@ -32,12 +34,11 @@ class Resources extends StatelessWidget {
               ),
             ),
             Expanded(
-                child: Card(
               child: ResourcesSide(),
-            ))
+            )
           ],
         ),
-        mobile: ListView(
+        mobile: Column(
           children: [ResourcesSide(), ResourcesTop(), ResourcesMobile()],
         ),
       ),

@@ -19,13 +19,14 @@ class ChatsList extends StatelessWidget {
                 .collection('messages')
                 .doc('consultation')
                 .collection(chat.userId)
-                .orderBy('createdAt')
+                .orderBy('createdAt', descending: true)
                 .snapshots(),
             builder: (context, snapshot) {
               if (snapshot.hasData && !snapshot.hasError) {
                 List<DocumentSnapshot> documents = snapshot.data.docs;
 
                 return ListView(
+                    reverse: true,
                     children: documents
                         .map((e) => ChatBubble(
                               userId: e['userId'],

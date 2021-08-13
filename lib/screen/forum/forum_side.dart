@@ -15,7 +15,8 @@ class ForumSide extends StatelessWidget {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Container(
-      width: 250,
+      width: size.width * 0.2,
+      constraints: BoxConstraints(minWidth: 250),
       child: Column(
         children: [
           SizedBox(
@@ -65,7 +66,8 @@ class _PostToGalleryState extends State<PostToGallery> {
     final size = MediaQuery.of(context).size;
 
     return Container(
-      width: size.width > 648 ? 230 : double.infinity,
+      width: size.width > 648 ? size.width * 0.19 : double.infinity,
+      constraints: BoxConstraints(minWidth: 230),
       margin: size.width > 648 ? EdgeInsets.symmetric(horizontal: 30) : null,
       child: Card(
           shape:
