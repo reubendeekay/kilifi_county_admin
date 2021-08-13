@@ -46,12 +46,12 @@ class MyApp extends StatelessWidget {
             textTheme: GoogleFonts.latoTextTheme(
               Theme.of(context).textTheme,
             )),
-        // home: StreamBuilder(
-        //   stream: FirebaseAuth.instance.authStateChanges(),
-        //   builder: (ctx, snapshot) => snapshot.hasData ? Home() : StartScreen(),
-        // ),
+        home: StreamBuilder(
+          stream: FirebaseAuth.instance.authStateChanges(),
+          builder: (ctx, snapshot) => snapshot.hasData ? Home() : StartScreen(),
+        ),
 
-        home: Home(),
+        // home: Home(),
 
         routes: {
           AddArticle.routeName: (ctx) => AddArticle(),
