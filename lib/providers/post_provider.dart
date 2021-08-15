@@ -10,7 +10,7 @@ import 'package:kilifi_county_admin/providers/user_provider.dart';
 
 class Post {
   final UserModel user;
-  final String imageUrl;
+  final List<dynamic> imageUrl;
   final Uint8List imageFile;
   List likes;
   final String description;
@@ -67,7 +67,7 @@ class PostProvider with ChangeNotifier {
       'fullName': post.user.fullName,
       'username': post.user.username,
       'profilePic': post.user.imageUrl,
-      'imageUrl': post.imageFile != null ? url : null,
+      'imageUrl': post.imageFile != null ? [url] : null,
       'postId': id.id,
       'description': post.description,
       'comments': [],

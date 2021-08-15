@@ -237,7 +237,7 @@ class JobOpportunitiesPosts extends StatelessWidget {
               List<DocumentSnapshot> documents = snapshot.data.docs;
 
               return Container(
-                height: 310,
+                height: size.width < 648 ? double.infinity : 310,
                 margin: EdgeInsets.symmetric(horizontal: 20),
                 child: ListView(
                   shrinkWrap: true,
@@ -304,7 +304,7 @@ class JobOpportunitiesPosts extends StatelessWidget {
                         child: Text(
                           title,
                           softWrap: true,
-                          overflow: TextOverflow.ellipsis,
+                          overflow: TextOverflow.fade,
                           style:
                               font(fontSize: 16, fontWeight: FontWeight.bold),
                         ),

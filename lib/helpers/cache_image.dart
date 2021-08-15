@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:shimmer/shimmer.dart';
 
 Widget cacheImage({
   String url,
@@ -11,7 +12,18 @@ Widget cacheImage({
     fit: fit != null ? fit : BoxFit.cover,
     width: width != null ? width : null,
     progressIndicatorBuilder: (context, url, downloadProgress) =>
-        CircularProgressIndicator(value: downloadProgress.progress),
+        Shimmer.fromColors(
+      baseColor: Colors.grey,
+      highlightColor: Colors.grey[200],
+      child: Text(
+        'Shimmer',
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          fontSize: 40.0,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    ),
     errorWidget: (context, url, error) => Icon(Icons.error),
   );
 }
