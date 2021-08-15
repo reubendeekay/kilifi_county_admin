@@ -46,17 +46,18 @@ class _ResourcesCategoryState extends State<ResourcesCategory> {
         width: size.width * 0.20,
         child: Column(
           children: [
-            Container(
-              width: size.width * 0.17,
-              margin: EdgeInsets.all(10),
-              child: Text(
-                widget.name,
-                style:
-                    font().copyWith(fontSize: 16, fontWeight: FontWeight.w600),
+            if (size.width > 648)
+              Container(
+                width: size.width * 0.17,
+                margin: EdgeInsets.all(10),
+                child: Text(
+                  widget.name,
+                  style: font()
+                      .copyWith(fontSize: 16, fontWeight: FontWeight.w600),
+                ),
               ),
-            ),
             Container(
-                width: size.width * 0.26,
+                width: size.width > 648 ? size.width * 0.26 : double.infinity,
                 margin: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                 decoration: BoxDecoration(
                     color: Colors.grey[100],
@@ -174,7 +175,7 @@ class ResourcesSide extends StatelessWidget {
         ]),
         mobile: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           SizedBox(
-            height: 50,
+            height: 30,
           ),
           Container(
             margin: EdgeInsets.all(10),
@@ -325,24 +326,15 @@ class DocumentTile extends StatelessWidget {
 class ResourcesMobile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return Container(
+      height: size.height * 0.9,
       child: DefaultTabController(
-        length: 2,
+        length: 4,
+        initialIndex: 1,
         child: Scaffold(
           appBar: AppBar(
             elevation: 0,
-            actions: [
-              RaisedButton(
-                onPressed: () {},
-                color: kBackground.withOpacity(0.5),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(5)),
-                child: Text(
-                  'Upload document',
-                  style: font().copyWith(fontSize: 16, color: Colors.white),
-                ),
-              ),
-            ],
             backgroundColor: Colors.white,
             bottom: TabBar(
               indicatorColor: Colors.white,
@@ -351,9 +343,9 @@ class ResourcesMobile extends StatelessWidget {
               labelColor: Colors.black,
               // indicator: BoxDecoration(
               //     color: kPrimary, borderRadius: BorderRadius.circular(10)),
-              labelStyle: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
+              labelStyle: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
               unselectedLabelStyle:
-                  TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+                  TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
               onTap: (index) {
                 // Tab index when user select it, it start from zero
               },
@@ -364,6 +356,10 @@ class ResourcesMobile extends StatelessWidget {
                 Tab(
                   child: Text('Departments'),
                 ),
+                Tab(
+                  child: Text('Budget & Finances'),
+                ),
+                Tab(child: Text('Perfomance Contract Docs')),
               ],
             ),
           ),
@@ -371,6 +367,8 @@ class ResourcesMobile extends StatelessWidget {
             children: [
               ResourcesCategory('Downloads'),
               ResourcesCategory('Departments'),
+              ResourcesCategory('Budget&Finances'),
+              ResourcesCategory('Perfomance Contract Docs'),
             ],
           ),
         ),

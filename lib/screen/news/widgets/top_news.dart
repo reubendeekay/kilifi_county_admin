@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kilifi_county_admin/helpers/constants.dart';
-import 'package:kilifi_county_admin/helpers/responsive.dart';
+
 import 'package:kilifi_county_admin/screen/news/add_article.dart';
 
 class TopAddNews extends StatelessWidget {
@@ -21,9 +21,11 @@ class TopAddNews extends StatelessWidget {
                 'Whats New?',
                 style: TextStyle(fontSize: 30, fontWeight: FontWeight.w900),
               ),
-              Container(
+              AnimatedContainer(
+                  duration: Duration(milliseconds: 500),
                   margin: EdgeInsets.symmetric(vertical: 10),
-                  width: size.width * 0.33,
+                  width:
+                      size.width > 648 ? size.width * 0.33 : size.width * 0.558,
                   child: Text(
                     'Is there anything happenind worth sharing?. Give the users detailed infomation about the progess and running of the County.',
                     softWrap: true,
@@ -46,9 +48,10 @@ class TopAddNews extends StatelessWidget {
             ],
           ),
           Spacer(),
-          Container(
-              width: size.width * 0.15,
-              height: size.width * 0.15,
+          AnimatedContainer(
+              duration: Duration(milliseconds: 500),
+              width: size.width > 648 ? size.width * 0.15 : size.width * 0.25,
+              height: size.width > 648 ? size.width * 0.15 : size.width * 0.25,
               child:
                   Image.asset('assets/images/news_cat.png', fit: BoxFit.fill))
         ],

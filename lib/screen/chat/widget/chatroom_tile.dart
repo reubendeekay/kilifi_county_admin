@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -46,7 +47,7 @@ class ChatroomTile extends StatelessWidget {
         child: ListTile(
           leading: CircleAvatar(
             radius: 20,
-            backgroundImage: NetworkImage(imageUrl),
+            backgroundImage: CachedNetworkImageProvider(imageUrl),
           ),
           title: Row(
             children: [

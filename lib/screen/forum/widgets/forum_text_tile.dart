@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hovering/hovering.dart';
@@ -17,7 +18,7 @@ class ForumTextTile extends StatelessWidget {
       width: double.infinity,
       margin: size.width > 648
           ? EdgeInsets.symmetric(horizontal: size.width * 0.1)
-          : 10,
+          : EdgeInsets.symmetric(horizontal: 10),
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
           border: Border.all(width: 0.5, color: Colors.grey[200])),
@@ -28,7 +29,7 @@ class ForumTextTile extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 18,
-                backgroundImage: NetworkImage(post.user.imageUrl),
+                backgroundImage: CachedNetworkImageProvider(post.user.imageUrl),
               ),
               SizedBox(
                 width: 10,

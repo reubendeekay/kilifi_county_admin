@@ -9,8 +9,10 @@ class GreetingsTop extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 25, horizontal: 45),
+    return AnimatedContainer(
+      duration: Duration(milliseconds: 1200),
+      margin: EdgeInsets.symmetric(
+          vertical: size.width > 820 ? 25 : 100, horizontal: 45),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Container(
           margin: EdgeInsets.symmetric(vertical: 3),

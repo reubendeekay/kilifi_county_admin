@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:kilifi_county_admin/helpers/constants.dart';
+
 import 'package:kilifi_county_admin/screen/forum/forum_container.dart';
 import 'package:kilifi_county_admin/screen/forum/forum_side.dart';
+import 'package:kilifi_county_admin/screen/forum/widgets/forum_posts.dart';
 
 class ForumMobile extends StatelessWidget {
   @override
@@ -10,7 +11,8 @@ class ForumMobile extends StatelessWidget {
     return Container(
       alignment: AlignmentDirectional.topStart,
       child: DefaultTabController(
-        length: 2,
+        length: 3,
+        initialIndex: 1,
         child: Scaffold(
           appBar: AppBar(
             elevation: 0,
@@ -30,25 +32,19 @@ class ForumMobile extends StatelessWidget {
               },
               tabs: [
                 Tab(
-                  child: Text('Latest'),
+                  child: Text('Employment'),
                 ),
                 Tab(
-                  child: Text('Pending'),
+                  child: Text('Forum'),
+                ),
+                Tab(
+                  child: Text('Gallery'),
                 ),
               ],
             ),
-            title: Center(
-              child: Text(
-                'Appointments',
-                style: font().copyWith(
-                    color: Colors.black,
-                    fontWeight: FontWeight.w900,
-                    fontSize: 28),
-              ),
-            ),
           ),
           body: TabBarView(
-            children: [ForumMobilePosts(), ForumSide()],
+            children: [ForumMobilePosts(), ForumPosts(), ForumSide()],
           ),
         ),
       ),
@@ -78,7 +74,9 @@ class ForumMobilePosts extends StatelessWidget {
                     fontWeight: FontWeight.w800, fontSize: 24),
               )),
             ),
-            JobOpportunitiesPosts(),
+            JobOpportunitiesPosts(
+              isVert: true,
+            ),
           ],
         ),
       ),

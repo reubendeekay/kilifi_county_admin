@@ -7,11 +7,9 @@ import 'package:kilifi_county_admin/providers/chat_provider.dart';
 import 'package:kilifi_county_admin/providers/post_provider.dart';
 import 'package:kilifi_county_admin/providers/user_provider.dart';
 import 'package:kilifi_county_admin/screen/auth_screen.dart';
-import 'package:kilifi_county_admin/screen/chat/chat.dart';
 
 import 'package:kilifi_county_admin/screen/chat/widget/chat_profile.dart';
 import 'package:kilifi_county_admin/screen/chat/widget/chatscreen.dart';
-import 'package:kilifi_county_admin/screen/dashboard/widgets/new_users.dart';
 import 'package:kilifi_county_admin/screen/drawer.dart';
 
 import 'package:kilifi_county_admin/screen/news/add_article.dart';
@@ -54,6 +52,7 @@ class MyApp extends StatelessWidget {
         // home: Home(),
 
         routes: {
+          Home.routeName: (ctx) => Home(),
           AddArticle.routeName: (ctx) => AddArticle(),
           ChatProfile.routeName: (ctx) => ChatProfile(),
           ChatScreen.routeName: (ctx) => ChatScreen(),

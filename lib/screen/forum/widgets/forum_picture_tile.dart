@@ -1,8 +1,10 @@
 import 'dart:ui';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hovering/hovering.dart';
+import 'package:kilifi_county_admin/helpers/cache_image.dart';
 import 'package:kilifi_county_admin/helpers/constants.dart';
 import 'package:kilifi_county_admin/providers/post_provider.dart';
 import 'package:kilifi_county_admin/screen/forum/widgets/like_widget.dart';
@@ -17,7 +19,7 @@ class ForumPictureTile extends StatelessWidget {
       hoverDecoration: BoxDecoration(color: Colors.grey[200].withOpacity(0.4)),
       margin: size.width > 648
           ? EdgeInsets.symmetric(horizontal: size.width * 0.1)
-          : 10,
+          : EdgeInsets.symmetric(horizontal: 10),
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
           border: Border.all(width: 0.5, color: Colors.grey[200])),
@@ -27,7 +29,7 @@ class ForumPictureTile extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 25,
-                backgroundImage: NetworkImage(post.user.imageUrl),
+                backgroundImage: CachedNetworkImageProvider(post.user.imageUrl),
               ),
               SizedBox(
                 width: size.width * 0.02,
@@ -75,8 +77,8 @@ class ForumPictureTile extends StatelessWidget {
             height: size.height * 0.55,
             child: ClipRRect(
               borderRadius: BorderRadius.circular(10),
-              child: Image.network(
-                post.imageUrl,
+              child: cacheImage(
+                url: post.imageUrl,
                 width: double.infinity,
                 fit: BoxFit.cover,
               ),
@@ -125,7 +127,7 @@ class ForumPictureTile extends StatelessWidget {
                             left: 0,
                             child: CircleAvatar(
                                 radius: 14,
-                                backgroundImage: NetworkImage(
+                                backgroundImage: CachedNetworkImageProvider(
                                   post.likes[0]['images'],
                                 ))),
                         if (post.likes.length > 1)
@@ -133,7 +135,7 @@ class ForumPictureTile extends StatelessWidget {
                               left: 12,
                               child: CircleAvatar(
                                   radius: 14,
-                                  backgroundImage: NetworkImage(
+                                  backgroundImage: CachedNetworkImageProvider(
                                     post.likes[1]['images'],
                                   ))),
                         if (post.likes.length > 2)
@@ -141,7 +143,7 @@ class ForumPictureTile extends StatelessWidget {
                               left: 24,
                               child: CircleAvatar(
                                   radius: 14,
-                                  backgroundImage: NetworkImage(
+                                  backgroundImage: CachedNetworkImageProvider(
                                     post.likes[2]['images'],
                                   ))),
                         if (post.likes.length > 3)
@@ -149,7 +151,7 @@ class ForumPictureTile extends StatelessWidget {
                               left: 36,
                               child: CircleAvatar(
                                   radius: 14,
-                                  backgroundImage: NetworkImage(
+                                  backgroundImage: CachedNetworkImageProvider(
                                     post.likes[3]['images'],
                                   ))),
                         if (post.likes.length > 4)
@@ -157,7 +159,7 @@ class ForumPictureTile extends StatelessWidget {
                               left: 48,
                               child: CircleAvatar(
                                   radius: 14,
-                                  backgroundImage: NetworkImage(
+                                  backgroundImage: CachedNetworkImageProvider(
                                     post.likes[4]['images'],
                                   ))),
                       ],

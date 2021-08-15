@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:kilifi_county_admin/helpers/constants.dart';
@@ -126,7 +127,7 @@ class UserActionsState extends State<UserActions> {
               children: [
                 CircleAvatar(
                   radius: 50,
-                  backgroundImage: NetworkImage(widget.imageUrl),
+                  backgroundImage: CachedNetworkImageProvider(widget.imageUrl),
                 ),
                 SizedBox(
                   height: 10,

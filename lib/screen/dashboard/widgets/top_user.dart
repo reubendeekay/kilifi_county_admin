@@ -24,7 +24,7 @@ class _TopUserState extends State<TopUser> {
       decoration: isTapped
           ? kBox.copyWith(color: Colors.white.withOpacity(0.25))
           : null,
-      width: 265,
+      width: 270,
       padding: EdgeInsets.all(15),
       child: SingleChildScrollView(
         child: Column(
@@ -43,9 +43,18 @@ class _TopUserState extends State<TopUser> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      user.fullName,
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                    Row(
+                      children: [
+                        Text(
+                          user.fullName,
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(
+                          width: 5,
+                        ),
+                        if (user.isVerified)
+                          Icon(Icons.verified, size: 13, color: Colors.blue),
+                      ],
                     ),
                     SizedBox(height: 3),
                     Text(
@@ -70,7 +79,6 @@ class _TopUserState extends State<TopUser> {
                     size: 20,
                   ),
                 ),
-                SizedBox(width: size.width * 0.01),
               ],
             ),
             if (isTapped)

@@ -38,8 +38,13 @@ class Resources extends StatelessWidget {
             )
           ],
         ),
-        mobile: Column(
-          children: [ResourcesSide(), ResourcesTop(), ResourcesMobile()],
+        mobile: Container(
+          height: size.height,
+          child: SingleChildScrollView(
+            child: Column(
+              children: [ResourcesSide(), ResourcesTop(), ResourcesMobile()],
+            ),
+          ),
         ),
       ),
     );

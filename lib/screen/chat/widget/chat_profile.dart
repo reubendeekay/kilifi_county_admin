@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:kilifi_county_admin/helpers/constants.dart';
 import 'package:kilifi_county_admin/providers/chat_provider.dart';
@@ -19,7 +20,7 @@ class ChatProfile extends StatelessWidget {
             Center(
               child: CircleAvatar(
                 radius: 75,
-                backgroundImage: NetworkImage(chat.imageUrl),
+                backgroundImage: CachedNetworkImageProvider(chat.imageUrl),
               ),
             ),
             SizedBox(
@@ -27,10 +28,23 @@ class ChatProfile extends StatelessWidget {
             ),
             Center(
               child: Flexible(
-                child: Text(
-                  chat.fullName,
-                  style: font()
-                      .copyWith(fontWeight: FontWeight.w900, fontSize: 24),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      chat.fullName,
+                      style: font()
+                          .copyWith(fontWeight: FontWeight.w900, fontSize: 24),
+                    ),
+                    SizedBox(
+                      width: 5,
+                    ),
+                    if (chat.isVerified)
+                      Icon(
+                        Icons.verified,
+                        color: Colors.blue,
+                      )
+                  ],
                 ),
               ),
             ),
@@ -50,9 +64,11 @@ class ChatProfile extends StatelessWidget {
                 vertical: 5,
               ),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Container(
                     width: 50,
+                    alignment: Alignment.centerLeft,
                     child: Text(
                       'Phone',
                       style: font().copyWith(color: Colors.grey),
@@ -73,9 +89,11 @@ class ChatProfile extends StatelessWidget {
                 vertical: 5,
               ),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Container(
                     width: 50,
+                    alignment: Alignment.centerLeft,
                     child: Text(
                       'Email',
                       style: font().copyWith(color: Colors.grey),
@@ -98,9 +116,11 @@ class ChatProfile extends StatelessWidget {
                 vertical: 5,
               ),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Container(
                     width: 50,
+                    alignment: Alignment.centerLeft,
                     child: Text(
                       'ID',
                       style: font().copyWith(color: Colors.grey),

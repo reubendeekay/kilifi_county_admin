@@ -14,6 +14,7 @@ DrawerItem items = DrawerItems.home;
 int currentIndex = 0;
 
 class Home extends StatefulWidget {
+  static const routeName = '/home';
   @override
   _HomeState createState() => _HomeState();
 }
@@ -55,7 +56,7 @@ class _HomeState extends State<Home> {
     final page = DrawerItems.all;
 
     return SizedBox(
-      width: 195,
+      width: 200,
       child: Drawer(
         elevation: 0,
         child: Container(
@@ -179,8 +180,8 @@ class DrawerItems {
 
   static const appointments = DrawerItem(
       title: 'Appointments', icon: Icons.calendar_today_outlined, index: 3);
-  static const chat =
-      DrawerItem(title: 'Chat', icon: FontAwesomeIcons.comment, index: 4);
+  static const chat = DrawerItem(
+      title: 'Customer Care', icon: FontAwesomeIcons.comment, index: 4);
   static const resources =
       DrawerItem(title: 'Resources', icon: FontAwesomeIcons.filePdf, index: 5);
 

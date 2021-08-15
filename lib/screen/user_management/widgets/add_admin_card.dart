@@ -180,6 +180,7 @@ class _CreateAdminState extends State<CreateAdmin> {
   String idNo = '';
   String phoneNumber = '';
   String location = '';
+  String office = '';
   Uint8List fileBytes;
   String fileName;
   @override
@@ -253,6 +254,7 @@ class _CreateAdminState extends State<CreateAdmin> {
                 textField('Username', username),
                 textField('National ID', idNo),
                 textField('Phone number', phoneNumber),
+                textField('Office', office),
                 textField('Sub County', location),
                 SizedBox(
                   height: 10,

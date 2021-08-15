@@ -27,7 +27,7 @@ class _ChatroomState extends State<Chatroom> {
                   padding: EdgeInsets.symmetric(horizontal: 10),
                   child: TextField(
                     controller: searchController,
-                    onChanged: (_) {
+                    onChanged: (val) {
                       setState(() {});
                     },
                     decoration: InputDecoration(

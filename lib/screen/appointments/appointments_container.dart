@@ -11,7 +11,7 @@ class AppoinmentsContainer extends StatelessWidget {
     final size = MediaQuery.of(context).size;
     return Container(
       alignment: AlignmentDirectional.topStart,
-      width: size.width * 0.7,
+      width: size.width > 800 ? size.width * 0.7 : size.width,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -34,7 +34,7 @@ class AppointmentList extends StatelessWidget {
       stream: FirebaseFirestore.instance
           .collection('admin')
           .doc('appointments')
-          .collection('Governor')
+          .collection('requests')
           .where('isApproved', isNotEqualTo: true)
           .snapshots(),
       builder: (ctx, snapshot) {
@@ -47,6 +47,7 @@ class AppointmentList extends StatelessWidget {
                 child: GridView.builder(
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 3,
+
                       mainAxisExtent:
                           210, // <== change the height to fit your needs
                     ),
@@ -78,8 +79,8 @@ class AppointmentList extends StatelessWidget {
                   itemCount: documents.length,
                   itemBuilder: (context, i) => AppointmentCard(
                         date: documents[i]['date'],
-                        appointmentId: documents[i]['appointmentId'],
                         imageUrl: documents[i]['imageUrl'],
+                        appointmentId: documents[i]['appointmentId'],
                         username: documents[i]['username'],
                         fullName: documents[i]['name'],
                         time: documents[i]['time'],
@@ -98,15 +99,22 @@ class AppointmentList extends StatelessWidget {
                       210, // <== change the height to fit your needs
                 ),
                 itemCount: documents.length,
-                itemBuilder: (context, i) => AppointmentCard(
-                      date: documents[i]['date'],
-                      fullName: documents[i]['name'],
-                      time: documents[i]['time'],
-                      idNo: documents[i]['idNo'],
-                      purpose: documents[i]['purpose'],
-                      phoneNumber: documents[i]['phoneNumber'],
-                      office: documents[i]['office'],
-                      isApproved: documents[i]['isApproved'],
+                itemBuilder: (context, i) => Container(
+                      constraints:
+                          BoxConstraints(minWidth: size.width / 2 - 60),
+                      child: AppointmentCard(
+                        date: documents[i]['date'],
+                        imageUrl: documents[i]['imageUrl'],
+                        appointmentId: documents[i]['appointmentId'],
+                        username: documents[i]['username'],
+                        fullName: documents[i]['name'],
+                        time: documents[i]['time'],
+                        idNo: documents[i]['idNo'],
+                        purpose: documents[i]['purpose'],
+                        phoneNumber: documents[i]['phoneNumber'],
+                        office: documents[i]['office'],
+                        isApproved: documents[i]['isApproved'],
+                      ),
                     )),
           );
 

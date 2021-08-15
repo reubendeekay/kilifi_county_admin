@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:kilifi_county_admin/helpers/constants.dart';
@@ -31,9 +32,10 @@ class AppointmentCard extends StatelessWidget {
       : super(key: key);
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return AnimatedContainer(
       duration: Duration(milliseconds: 200),
-      width: 270,
+      width: size.width < 648 ? size.width / 2 - 60 : 270,
       child: Card(
         elevation: 5,
         child: Stack(
@@ -46,7 +48,7 @@ class AppointmentCard extends StatelessWidget {
                     ListTile(
                       leading: CircleAvatar(
                         radius: 20,
-                        backgroundImage: NetworkImage(imageUrl),
+                        backgroundImage: CachedNetworkImageProvider(imageUrl),
                       ),
                       title: Text(fullName),
                       subtitle: Text('@$username'),
@@ -96,16 +98,18 @@ class AppointmentCard extends StatelessWidget {
                                   FirebaseFirestore.instance
                                       .collection('admin')
                                       .doc('appointments')
-                                      .collection('Governor')
+                                      .collection('requests')
                                       .doc(appointmentId)
                                       .update({
-                                    'isApproved': true,
+                                    'isApproved': isApproved ? false : true,
                                   });
                                 },
                                 child: Text(
-                                  'Approve',
+                                  isApproved ? 'Deny' : 'Approve',
                                   style: font(
-                                      color: Colors.green,
+                                      color: isApproved
+                                          ? Colors.red
+                                          : Colors.green,
                                       fontWeight: FontWeight.bold),
                                 ),
                               ),
@@ -139,7 +143,7 @@ class AppointmentCard extends StatelessWidget {
                       FirebaseFirestore.instance
                           .collection('admin')
                           .doc('appointments')
-                          .collection('Governor')
+                          .collection('requests')
                           .doc(appointmentId)
                           .update({
                         'isApproved': false,

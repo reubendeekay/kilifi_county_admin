@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -9,75 +10,133 @@ import 'package:kilifi_county_admin/screen/user_management/user_management.dart'
 class NewUsers extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 25),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Row(
-          children: [
-            UserManagementCard(),
-            StreamBuilder(
-                stream:
-                    FirebaseFirestore.instance.collection('users').snapshots(),
-                builder: (ctx, snapshots) {
-                  if (snapshots.hasData && !snapshots.hasError) {
-                    return GestureDetector(
-                      onTap: () => Navigator.of(context)
-                          .pushNamed(UserManagement.routeName),
-                      child: TotalUsersTile(
-                        number: snapshots.data.docs.length,
-                      ),
-                    );
-                  } else {
-                    return TotalUsersTile();
-                  }
-                }),
-            SizedBox(
-              width: 10,
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  margin: EdgeInsets.only(left: 15, top: 15, bottom: 5),
-                  child: Text(
-                    'Latest Registered users',
-                    style: font()
-                        .copyWith(fontWeight: FontWeight.bold, fontSize: 16),
+      child: size.width > 730
+          ? SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  UserManagementCard(),
+                  StreamBuilder(
+                      stream: FirebaseFirestore.instance
+                          .collection('users')
+                          .snapshots(),
+                      builder: (ctx, snapshots) {
+                        if (snapshots.hasData && !snapshots.hasError) {
+                          return GestureDetector(
+                            onTap: () => Navigator.of(context)
+                                .pushNamed(UserManagement.routeName),
+                            child: TotalUsersTile(
+                              number: snapshots.data.docs.length,
+                            ),
+                          );
+                        } else {
+                          return TotalUsersTile();
+                        }
+                      }),
+                  SizedBox(
+                    width: 10,
                   ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        margin: EdgeInsets.only(left: 15, top: 15, bottom: 5),
+                        child: Text(
+                          'Latest Registered users',
+                          style: font().copyWith(
+                              fontWeight: FontWeight.bold, fontSize: 16),
+                        ),
+                      ),
+                      StreamBuilder(
+                          stream: FirebaseFirestore.instance
+                              .collection('users')
+                              .orderBy('joinedAt')
+                              .limit(3)
+                              .snapshots(),
+                          builder: (ctx, snapshots) {
+                            if (snapshots.hasData && !snapshots.hasError) {
+                              List<DocumentSnapshot> documents =
+                                  snapshots.data.docs;
+                              return Row(
+                                children: documents
+                                    .map((e) => GestureDetector(
+                                          onTap: () => Navigator.of(context)
+                                              .pushNamed(
+                                                  UserManagement.routeName),
+                                          child: NewUserTile(
+                                              dateJoined: e['joinedAt'],
+                                              fullName: e['fullName'],
+                                              imageUrl: e['imageUrl'],
+                                              username: e['username'],
+                                              isVerified: e['isVerified']),
+                                        ))
+                                    .toList(),
+                              );
+                            } else {
+                              return Container();
+                            }
+                          }),
+                    ],
+                  )
+                ],
+              )
+
+              //IMPLEMENTING FOR MOBILE
+
+              )
+          : Column(
+              children: [
+                UserManagementCard(),
+                SizedBox(
+                  height: 20,
                 ),
-                StreamBuilder(
-                    stream: FirebaseFirestore.instance
-                        .collection('users')
-                        .orderBy('joinedAt')
-                        .limit(3)
-                        .snapshots(),
-                    builder: (ctx, snapshots) {
-                      if (snapshots.hasData && !snapshots.hasError) {
-                        List<DocumentSnapshot> documents = snapshots.data.docs;
-                        return Row(
-                          children: documents
-                              .map((e) => GestureDetector(
-                                    onTap: () => Navigator.of(context)
-                                        .pushNamed(UserManagement.routeName),
-                                    child: NewUserTile(
-                                      dateJoined: e['joinedAt'],
-                                      fullName: e['fullName'],
-                                      imageUrl: e['imageUrl'],
-                                      username: e['username'],
-                                    ),
-                                  ))
-                              .toList(),
-                        );
-                      } else {
-                        return Container();
-                      }
-                    }),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      margin: EdgeInsets.only(left: 15, top: 15, bottom: 5),
+                      child: Text(
+                        'Latest Registered users',
+                        style: font().copyWith(
+                            fontWeight: FontWeight.bold, fontSize: 16),
+                      ),
+                    ),
+                    StreamBuilder(
+                        stream: FirebaseFirestore.instance
+                            .collection('users')
+                            .orderBy('joinedAt')
+                            .limit(3)
+                            .snapshots(),
+                        builder: (ctx, snapshots) {
+                          if (snapshots.hasData && !snapshots.hasError) {
+                            List<DocumentSnapshot> documents =
+                                snapshots.data.docs;
+                            return Row(
+                              children: documents
+                                  .map((e) => GestureDetector(
+                                        onTap: () => Navigator.of(context)
+                                            .pushNamed(
+                                                UserManagement.routeName),
+                                        child: NewUserTile(
+                                            dateJoined: e['joinedAt'],
+                                            fullName: e['fullName'],
+                                            imageUrl: e['imageUrl'],
+                                            username: e['username'],
+                                            isVerified: e['isVerified']),
+                                      ))
+                                  .toList(),
+                            );
+                          } else {
+                            return Container();
+                          }
+                        }),
+                  ],
+                )
               ],
-            )
-          ],
-        ),
-      ),
+            ),
     );
   }
 }
@@ -162,9 +221,15 @@ class NewUserTile extends StatelessWidget {
   final String fullName;
   final String username;
   final Timestamp dateJoined;
+  final bool isVerified;
 
   const NewUserTile(
-      {Key key, this.imageUrl, this.fullName, this.username, this.dateJoined})
+      {Key key,
+      this.imageUrl,
+      this.isVerified,
+      this.fullName,
+      this.username,
+      this.dateJoined})
       : super(key: key);
   @override
   Widget build(BuildContext context) {
@@ -177,7 +242,6 @@ class NewUserTile extends StatelessWidget {
           blurRadius: 40,
         )
       ]),
-      width: 130,
       child: Card(
         elevation: 0,
         child: Padding(
@@ -186,17 +250,26 @@ class NewUserTile extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 30,
-                backgroundImage: NetworkImage(imageUrl),
+                backgroundImage: CachedNetworkImageProvider(imageUrl),
               ),
               SizedBox(
                 height: 1.25,
               ),
               Container(
                   margin: EdgeInsets.symmetric(vertical: 1),
-                  child: Text(fullName,
-                      style: font().copyWith(
-                        fontWeight: FontWeight.w500,
-                      ))),
+                  child: Row(
+                    children: [
+                      Text(fullName,
+                          style: font().copyWith(
+                            fontWeight: FontWeight.w500,
+                          )),
+                      SizedBox(
+                        width: 2,
+                      ),
+                      if (isVerified)
+                        Icon(Icons.verified, size: 13, color: Colors.blue)
+                    ],
+                  )),
               Container(
                   margin: EdgeInsets.symmetric(vertical: 1.25),
                   child: Text(
@@ -239,9 +312,9 @@ class UserManagementCard extends StatelessWidget {
     return GestureDetector(
       onTap: () => Navigator.of(context).pushNamed(UserManagement.routeName),
       child: Container(
-        width: size.width * 0.28,
+        width: size.width > 730 ? size.width * 0.28 : size.width - 50,
         constraints: BoxConstraints(minHeight: 175),
-        margin: EdgeInsets.symmetric(horizontal: 10),
+        margin: EdgeInsets.symmetric(horizontal: size.width > 730 ? 10 : 20),
         decoration: BoxDecoration(
             gradient: LinearGradient(
                 begin: Alignment.centerRight,
@@ -249,11 +322,12 @@ class UserManagementCard extends StatelessWidget {
                 colors: [kPrimary, Colors.yellow[500]]),
             borderRadius: BorderRadius.circular(10),
             boxShadow: [
-              BoxShadow(
-                color: Colors.grey,
-                spreadRadius: 0.5,
-                blurRadius: 40,
-              )
+              if (size.width > 700)
+                BoxShadow(
+                  color: Colors.grey,
+                  spreadRadius: 0.5,
+                  blurRadius: 40,
+                )
             ]),
 
         child: Column(
@@ -271,7 +345,9 @@ class UserManagementCard extends StatelessWidget {
             Row(
               children: [
                 Container(
-                  width: size.width * 0.19 - 10,
+                  width: size.width > 730
+                      ? size.width * 0.19 - 10
+                      : size.width * 0.4,
                   margin: EdgeInsets.fromLTRB(20, 10, 5, 36),
                   child: Text(
                       'Manage user requests and grant and revoke priviledges such as verification',

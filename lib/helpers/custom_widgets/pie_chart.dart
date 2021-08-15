@@ -55,7 +55,7 @@ class PieChart2State extends State {
                 ),
               ),
             ),
-            if (size.width > 1300)
+            if (size.width > 1300 || size.width < 648)
               AnimatedContainer(
                 duration: Duration(milliseconds: 1200),
                 curve: Curves.easeOut,

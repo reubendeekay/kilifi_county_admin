@@ -5,8 +5,10 @@ import 'package:kilifi_county_admin/screen/forum/forum_container.dart';
 class LatestPosts extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+      margin: EdgeInsets.symmetric(
+          vertical: 10, horizontal: size.width > 730 ? 15 : 0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -17,7 +19,9 @@ class LatestPosts extends StatelessWidget {
               style: font().copyWith(fontWeight: FontWeight.bold, fontSize: 18),
             ),
           ),
-          JobOpportunitiesPosts(),
+          JobOpportunitiesPosts(
+            isVert: false,
+          ),
         ],
       ),
     );

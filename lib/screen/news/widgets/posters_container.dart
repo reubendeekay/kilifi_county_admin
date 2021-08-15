@@ -1,4 +1,5 @@
 import 'package:aligned_dialog/aligned_dialog.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase/firebase.dart' as fb;
 
@@ -194,7 +195,8 @@ class _PosterTileState extends State<PosterTile>
                         turns: reverse,
                         child: CircleAvatar(
                           radius: 30.0,
-                          backgroundImage: NetworkImage(widget.image),
+                          backgroundImage:
+                              CachedNetworkImageProvider(widget.image),
                         )),
                   ),
                 ),
@@ -214,7 +216,8 @@ class _PosterTileState extends State<PosterTile>
                         children: [
                           CircleAvatar(
                             radius: 6,
-                            backgroundImage: NetworkImage(widget.profilePic),
+                            backgroundImage:
+                                CachedNetworkImageProvider(widget.profilePic),
                           ),
                           SizedBox(
                             width: 3,

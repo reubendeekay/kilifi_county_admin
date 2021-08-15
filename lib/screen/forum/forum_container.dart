@@ -4,6 +4,7 @@ import 'package:aligned_dialog/aligned_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:kilifi_county_admin/helpers/cache_image.dart';
 import 'package:kilifi_county_admin/helpers/constants.dart';
 import 'package:kilifi_county_admin/helpers/custom_widgets/bar_chart.dart';
 import 'package:kilifi_county_admin/helpers/custom_widgets/line_chart.dart';
@@ -57,7 +58,7 @@ class ForumContainer extends StatelessWidget {
               Center(
                 child: Container(
                     child: Text(
-                  'Poster Job/Internship Opportunities',
+                  'Job/Internship Opportunities',
                   style: font(fontWeight: FontWeight.w800, fontSize: 24),
                 )),
               ),
@@ -69,7 +70,9 @@ class ForumContainer extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    JobOpportunitiesPosts(),
+                    JobOpportunitiesPosts(
+                      isVert: false,
+                    ),
                   ],
                 ),
               ),
@@ -214,6 +217,8 @@ class _SendOpportunityState extends State<SendOpportunity> {
 }
 
 class JobOpportunitiesPosts extends StatelessWidget {
+  final bool isVert;
+  JobOpportunitiesPosts({this.isVert});
   final uid = FirebaseAuth.instance.currentUser.uid;
   @override
   Widget build(BuildContext context) {
@@ -233,13 +238,10 @@ class JobOpportunitiesPosts extends StatelessWidget {
 
               return Container(
                 height: 310,
+                margin: EdgeInsets.symmetric(horizontal: 20),
                 child: ListView(
                   shrinkWrap: true,
-                  scrollDirection:
-                      size.width > 648 ? Axis.horizontal : Axis.vertical,
-                  physics: size.width > 648
-                      ? ScrollPhysics()
-                      : NeverScrollableScrollPhysics(),
+                  scrollDirection: isVert ? Axis.vertical : Axis.horizontal,
                   children: documents
                       .map((e) => post(
                           size: size,
@@ -286,8 +288,8 @@ class JobOpportunitiesPosts extends StatelessWidget {
               children: [
                 Container(
                   height: 150,
-                  child: Image.network(
-                    imageUrl,
+                  child: cacheImage(
+                    url: imageUrl,
                     width: double.infinity,
                     fit: BoxFit.cover,
                   ),

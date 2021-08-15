@@ -9,7 +9,11 @@ class ForumPosts extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-      stream: FirebaseFirestore.instance.collection('posts').snapshots(),
+      stream: FirebaseFirestore.instance
+          .collection('posts')
+          .orderBy('createdAt')
+          .limit(15)
+          .snapshots(),
       builder: (ctx, snapshot) {
         if (!snapshot.hasData || snapshot.hasError || snapshot.data == null) {
           return CircularProgressIndicator();

@@ -63,6 +63,7 @@ class _JobDialogState extends State<JobDialog> {
       'title': jobTitleController.text,
       'jobId': jobId,
       'views': 0,
+      'createdAt': Timestamp.now(),
       'postPics': url,
       'description': jobDescriptionController.text,
       'link': jobLinkController.text,
@@ -102,9 +103,12 @@ class _JobDialogState extends State<JobDialog> {
                             child: ListView.builder(
                               scrollDirection: Axis.horizontal,
                               itemCount: fileBytes == null ? 0 : 1,
-                              itemBuilder: (context, index) => Image.memory(
-                                fileBytes,
-                                fit: BoxFit.cover,
+                              itemBuilder: (context, index) => Container(
+                                width: 370,
+                                child: Image.memory(
+                                  fileBytes,
+                                  fit: BoxFit.cover,
+                                ),
                               ),
                             ),
                           )),

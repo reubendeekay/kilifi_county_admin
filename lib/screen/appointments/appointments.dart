@@ -31,10 +31,11 @@ class Apppointments extends StatelessWidget {
               ],
             ),
           ),
-          Row(
-            children: [
-              Flexible(child: AppoinmentsContainer()),
-              if (size.width > 871)
+          if (size.width < 800) AppoinmentsContainer(),
+          if (size.width > 800)
+            Row(
+              children: [
+                Flexible(child: AppoinmentsContainer()),
                 Container(
                   height: double.infinity,
                   child: SingleChildScrollView(
@@ -57,7 +58,7 @@ class Apppointments extends StatelessWidget {
                                 stream: FirebaseFirestore.instance
                                     .collection('admin')
                                     .doc('appointments')
-                                    .collection('Governor')
+                                    .collection('requests')
                                     .where('isApproved', isEqualTo: true)
                                     .snapshots(),
                                 builder: (ctx, snapshot) {
@@ -94,8 +95,8 @@ class Apppointments extends StatelessWidget {
                     ),
                   ),
                 ),
-            ],
-          ),
+              ],
+            ),
         ],
       ),
     );

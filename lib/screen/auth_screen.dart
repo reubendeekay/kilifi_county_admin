@@ -6,6 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:kilifi_county_admin/helpers/constants.dart';
 import 'package:kilifi_county_admin/helpers/footer.dart';
+import 'package:kilifi_county_admin/screen/drawer.dart';
 
 class AuthScreen extends StatefulWidget {
   static const routeName = '/auth-screen';
@@ -14,17 +15,39 @@ class AuthScreen extends StatefulWidget {
 }
 
 class _AuthScreenState extends State<AuthScreen> {
+  double logoMargin;
+  double textFieldPadding;
+  double footerPosition;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    logoMargin = 5;
+    textFieldPadding = 70;
+    footerPosition = 30;
+    super.initState();
+  }
+
+  void animate() {
+    setState(() {
+      logoMargin = 50;
+      textFieldPadding = 20;
+      footerPosition = 1;
+    });
+  }
+
   final _formKey = GlobalKey<FormState>();
   String email = '';
 
   String password = '';
-  void _trySubmit() async {
+  Future<void> _trySubmit() async {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
 
       await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
       await FirebaseAuth.instance.setPersistence(Persistence.LOCAL);
+      Navigator.of(context).pushReplacementNamed(Home.routeName);
     }
   }
 
@@ -53,8 +76,14 @@ class _AuthScreenState extends State<AuthScreen> {
               child: Container(
                 child: Column(
                   children: [
-                    SizedBox(
-                      height: size.height * 0.1,
+                    AnimatedContainer(
+                      duration: Duration(seconds: 2),
+                      curve: Curves.fastLinearToSlowEaseIn,
+                      height: logoMargin,
+                      child: FutureBuilder(
+                          future: Future.delayed(Duration.zero)
+                              .then((value) => animate()),
+                          builder: (_, d) => Container()),
                     ),
                     Container(
                       height: 130,
@@ -76,8 +105,10 @@ class _AuthScreenState extends State<AuthScreen> {
                       // shape: RoundedRectangleBorder(
                       //     borderRadius: BorderRadius.circular(20)),
                       elevation: 0,
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 20),
+                      child: AnimatedPadding(
+                        duration: Duration(seconds: 1),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: textFieldPadding),
                         child: TextFormField(
                           decoration: InputDecoration(
                               hintText: 'email',
@@ -107,8 +138,10 @@ class _AuthScreenState extends State<AuthScreen> {
                       // shape: RoundedRectangleBorder(
                       // borderRadius: BorderRadius.circular(20)),
                       elevation: 0,
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 20),
+                      child: AnimatedPadding(
+                        duration: Duration(seconds: 1),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: textFieldPadding),
                         child: TextFormField(
                           decoration: InputDecoration(
                               hintText: 'password',
@@ -138,7 +171,7 @@ class _AuthScreenState extends State<AuthScreen> {
                         height: 40,
                         width: size.width * 0.15,
                         child: RaisedButton(
-                          onPressed: _trySubmit,
+                          onPressed: () async => await _trySubmit(),
                           child: Text(
                             'Sign in',
                             style: font().copyWith(
@@ -149,6 +182,15 @@ class _AuthScreenState extends State<AuthScreen> {
                           color: kBackground,
                         )),
                     Spacer(),
+                    AnimatedContainer(
+                      duration: Duration(
+                        seconds: 2,
+                      ),
+                      height: footerPosition,
+                      child: Container(
+                        width: 1,
+                      ),
+                    ),
                     Footer()
                   ],
                 ),
