@@ -53,6 +53,7 @@ class MyApp extends StatelessWidget {
 
         routes: {
           Home.routeName: (ctx) => Home(),
+          StartScreen.routeName: (ctx) => StartScreen(),
           AddArticle.routeName: (ctx) => AddArticle(),
           ChatProfile.routeName: (ctx) => ChatProfile(),
           ChatScreen.routeName: (ctx) => ChatScreen(),

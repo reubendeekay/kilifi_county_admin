@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:kilifi_county_admin/helpers/constants.dart';
 import 'package:kilifi_county_admin/providers/user_provider.dart';
+import 'package:kilifi_county_admin/screen/start_screen.dart';
 import 'package:provider/provider.dart';
 
 class TopUser extends StatefulWidget {
@@ -96,6 +97,8 @@ class _TopUserState extends State<TopUser> {
                       RaisedButton(
                         onPressed: () async {
                           await FirebaseAuth.instance.signOut();
+                          Navigator.of(context)
+                              .pushReplacementNamed(StartScreen.routeName);
                         },
                         color: kPrimary,
                         child: Text(

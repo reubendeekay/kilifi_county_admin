@@ -5,6 +5,7 @@ import 'package:kilifi_county_admin/helpers/footer.dart';
 import 'package:kilifi_county_admin/screen/auth_screen.dart';
 
 class StartScreen extends StatelessWidget {
+  static const routeName = '/start-screen';
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
