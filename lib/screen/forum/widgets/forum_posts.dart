@@ -11,7 +11,7 @@ class ForumPosts extends StatelessWidget {
     return StreamBuilder(
       stream: FirebaseFirestore.instance
           .collection('posts')
-          .orderBy('createdAt')
+          .orderBy('createdAt', descending: true)
           .limit(15)
           .snapshots(),
       builder: (ctx, snapshot) {
@@ -22,7 +22,7 @@ class ForumPosts extends StatelessWidget {
 
           List<Widget> forum = [];
           documents.forEach((e) {
-            if (e['imageUrl'] != null) {
+            if (e['imageUrl'].isNotEmpty) {
               forum.add(ForumPictureTile(Post(
                   comments: e['comments'],
                   description: e['description'],

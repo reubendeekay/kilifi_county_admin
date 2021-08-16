@@ -13,17 +13,9 @@ Widget cacheImage({
     width: width != null ? width : null,
     progressIndicatorBuilder: (context, url, downloadProgress) =>
         Shimmer.fromColors(
-      baseColor: Colors.grey,
-      highlightColor: Colors.grey[200],
-      child: Text(
-        'Shimmer',
-        textAlign: TextAlign.center,
-        style: TextStyle(
-          fontSize: 40.0,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-    ),
+            baseColor: Colors.grey,
+            highlightColor: Colors.grey[200],
+            child: Container()),
     errorWidget: (context, url, error) => Icon(Icons.error),
   );
 }
